@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "omega-chimera-419314",
+  "private_key_id": "596f14d72e37741f63ef288072afd76cd39a5d7a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCzVmJIZ2A4YlJf\nZbIDxSSbK5oszOHQNtnmQO8Fy0fgTKBkgcL98a4MNjqFgzZi7agY8Qm9ED3vPZny\ngG1K34AKuq9dCQoUw1Ktp7tEgYcTza3erlMfbJ/n7y/Ns5GDVCp0PF+Onm4oF8y2\nkMV7Ks4UNeJadQTq7+zPIT24OY8v/zlK4hr3Fy1A4Cnq3dWHP9D/4UuaFk9KbMrM\n/aI18UI53mTmuJv2NZQ0Sc4BVromjWoQzdrq5rMxd4LxZ9BBGu5NkOnOhcocwqo0\nFUwjE0iQ5VJq7nfW0LrswPHChH0059B2uxuqj6w3CwFSqfpZ2sMo1LFdDcWrqw/9\nMLhLCXlrAgMBAAECggEASQixft4Gq/+ynyIZtHpZVY4UvBD2F2b3J1OjY98s1tYt\n7bCAug1t/ZAqFgxhHjm93uZuul2+c0tJgh42JCtQCE6NsxxGzDzdU1Y/J/9+BJ0b\nJVgmBuKkXn6kn6d056Bjp7GcksbHgrFqj6D2o5nDkix9kawdRBZQgOv/KCLcwsUE\nPfsrNGqc64Ox9RShQQ582S5EPpmAFVUA8HSAi8LUoQNKN2JLXj8SaStgz8gcVrO4\nox3A1mfeC7Tvlhk2+pxfwh1EBO62yLvhLoFwYu6nhiLV3bylKtOrOKahYT4zAaPO\n12ZRSWmm0PLS/Rn9+yWe/NlKAs1/cjlhq6xk/43CZQKBgQD0u3v7mcnNZnatvnVo\nZIfsFb0u3vMkhcd2VYPf3/IpFi+AU/s8k30Ol/7ILSIL3oh2+qOrAVw0Pzjn2tid\ndQhhNgNxAsE2Z0sGkDjMZCJjKQP1S4JBkotwxQ5cyS1tHC1jIiIbjrNalC6x/MXC\nrDJvJ5+HE87kRYbjBlOFy6JN3wKBgQC7mCDYE9XwZnI84lvFgzbVM59lbHQet7mP\nrCKVi2ecgo+lOjUavdpZw58UoKVYQlmaeXNPgsl53KYZL6wt5IOFCPaZ8rVS757r\nHA4Kp8WKqikyVn+mkU3K1d3ejv/+7wKyUnssSBbE4DBqhPQpvXprqcQrpHkYbgNV\nmXG4OhNt9QKBgDP0bWC/iEjzvLQr3872sKhdARmnOSUCxZKImwN3DnjMfe8XZRm6\nEe18NRmYA0dTydLAaOiP1Fw/I7yNCDl9M/c3OUnPlOcQzKurCHPTuj0k4vM7QX7c\nNoANRXxLNTqZpcUK5QTGqarMFJGyoOUwG1Dfr41ElkJ9xCIEIM0hquYvAoGAcJZk\nF+sHuolxxJLCK2+N6DVcU/3cT1dK+iyAcSpCnA9L8QlXN957/uXGQxYLRkZECs8b\nYrwG+alw0qrm9oAwYxa3Ejw1kToZMdgboU+B4rAvm3OIl0qb2sGysFE42SNPhgC0\nxiXZ7Hz08ekrtSVwJM+12c+TkhLs02INe1j3skUCgYBG8NTzlZ4HThXyyNEJGCO/\noJt6/yBpMYTbetCsNavWVG+A+eh9YqYq5lCVZ0TMmIwjNyPG0cA6dN/koeFQFWbw\n9MKFzTC1dHucz+1CMi+ZR+wAY0YymZDf6RMjJF1xPU7gKpOZ0ZJSZH1FEBy8jEBn\nOgi1RiCqjdKfhQxxLSijjQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "joinjoy-932@omega-chimera-419314.iam.gserviceaccount.com",
+  "client_id": "106669811907931415732",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/joinjoy-932%40omega-chimera-419314.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+  <link th:href="@{/favicon.ico}" rel="icon" type="image/x-icon" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link th:href="@{/css/cards.css }" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <link th:href="@{/css/cards.css }" rel="stylesheet" />
+  <link th:href="@{/css/ckeditor.css }" rel="stylesheet" />
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <title th:text="${organizer.get().oName}"></title>
+</head>
+<style>
+  .fade-and-grow {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .rounded-img {
+    max-width: 1080px;
+    /* 最大寬度 */
+    max-height: 360px;
+
+    width: 100%;
+    /* 自適應至父容器的寬度 */
+    height: auto;
+    /* 高度自動 */
+
+    object-fit: cover;
+    /* 圖片尺寸覆蓋 */
+    border-radius: 20px;
+    /* 圓角 */
+    display: block;
+    /* 塊狀顯示 */
+    margin: 0 auto;
+    /* 水平居中 */
+  }
+
+  .headshot-img {
+    width: 100px;
+    /* 設定圖片寬度 */
+    height: 100px;
+    /* 設定圖片高度 */
+    object-fit: cover;
+    /* 確保圖片不會變形 */
+    border-radius: 50%;
+    /* 圓角的弧度 */
+    display: block;
+    /* 確保圖片不是inline元素，這樣margin-top才會有效 */
+    margin-top: -50px;
+    /* 上移圖片，根據需要調整此值 */
+    margin-left: auto;
+    /* 水平居中 */
+    margin-right: auto;
+    border: 5px solid #ffffff;
+    /* 大頭貼的黃色邊框 */
+  }
+
+  /* 以下是活動縮圖 */
+  .activity {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 550px;
+    padding: 16px;
+    padding-top: 0;
+    /* 新增此行，如果您希望圖片貼近容器頂部 */
+    box-shadow: 2px 2px 10px #aaa;
+    overflow: hidden;
+    /* 隱藏超出的內容 */
+  }
+
+  .event-image {
+    width: 100%;
+    /* 設定圖片寬度為容器的 100% */
+    height: auto;
+    /* 高度自動調整 */
+    border-radius: 4px;
+    /* 如果需要圓角 */
+    object-fit: cover;
+    /* 這將會裁剪並覆蓋元素，可能會導致圖片某些部分不顯示 */
+  }
+
+  .event-info {
+    margin-top: 8px;
+  }
+
+  .event-date {
+    color: #555;
+    font-size: 0.9em;
+  }
+
+  .event-description {
+    color: #333;
+    font-size: 1em;
+    margin-top: 4px;
+  }
+
+  /* 圖片放大效果 */
+  .activity img {
+    transition: transform 0.3s ease;
+    transform: scale(1);
+    object-fit: cover;
+    /* 確保圖片不會變形 */
+    border-radius: 20px;
+    /* 圓角的弧度 */
+  }
+
+  .activity img:hover {
+    transform: scale(1.05);
+  }
+
+  .cover-div {
+    position: relative;
+    width: calc(80% - 40px);
+    /* 小於封面圖片的寬度 */
+    margin-top: -50px;
+    /* 上移此值讓 div 覆蓋在圖片上 */
+    z-index: 10;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-left: auto;
+    /* 自動邊距用於水平居中 */
+    margin-right: auto;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  /*三個表格的樣式*/
+  .info-table {
+    width: 100%;
+    /* 或根據需要設置具體寬度 */
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* 確保列寬均等 */
+  }
+
+  .info-table td {
+    text-align: center;
+    padding: 5px;
+  }
+
+  .separator {
+    border-left: 1px solid #ccc;
+    /* 分隔線顏色 */
+  }
+
+  /* 隱藏第一個和最後一個分隔線 */
+  .info-table td:first-child+.separator,
+  .info-table td:last-child+.separator {
+    border: none;
+  }
+
+  /* 隱藏表格的頂部和底部邊框 */
+  .info-table tr:first-child td,
+  .info-table tr:last-child td {
+    border-top: none;
+    border-bottom: none;
+  }
+
+  /*簡介區~*/
+  #ajaxContent {
+    width: 1080px;
+    /* 設定簡介區塊的寬度 */
+    margin: auto;
+    /* 水平居中 */
+    padding: 20px;
+    /* 內邊距，根據需要調整 */
+    border-radius: 10px;
+    /* 圓角，根據需要調整 */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    /* 陰影效果，根據需要調整 */
+  }
+
+  .btn-light {
+    background: linear-gradient(to right, #fafaf5, #fffbed);
+    /* 漸變背景色 */
+    color: white;
+    /* 文字顏色 */
+    border: none;
+    /* 移除邊框 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* 添加陰影 */
+    transition: all 0.3s;
+    /* 過渡效果 */
+    cursor: pointer;
+    /* 更改指針 */
+  }
+
+  .btn-light:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* 懸停時的陰影 */
+    transform: scale(1.05);
+    /* 懸停時放大 */
+  }
+
+  .btn-secondary2 {
+    background: linear-gradient(to right, #fefe98, #fed028);
+    /* 主要背景色 */
+    color: #333;
+    /* 文字顏色，更改為深色以確保對比 */
+    transition: all 0.3s;
+    /* 過渡效果 */
+  }
+
+  .btn-secondary2:hover {
+    background: linear-gradient(to right, #fefb88, #feda38);
+    /* 淡黃色背景，略亮但顏色相近 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 懸停時的陰影 */
+    transform: scale(1.05);
+    /* 懸停時放大 */
+  }
+
+  .activity-info {
+    flex-grow: 1;
+    /* 允許活動資訊佔用剩餘空間 */
+    /* 可能需要其他樣式設定 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .date-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fffef3;
+    border-radius: 15px;
+    width: 100px;
+    /* 調整成您希望的寬度 */
+    height: 100px;
+    /* 調整成您希望的高度 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* 選擇性的陰影 */
+    font-family: "Arial", sans-serif;
+    /* 使用您選擇的字體 */
+    text-align: center;
+    /* 將文字置中 */
+    flex-shrink: 0;
+  }
+
+  .date-icon .month {
+    font-size: 1.75rem;
+    /* 較小的字體大小 */
+    color: #9e9e9e;
+    /* 較淡的字體顏色 */
+  }
+
+  .date-icon .day {
+    font-size: 2.5rem;
+    /* 較大的字體大小 */
+    color: #212121;
+    /* 較深的字體顏色 */
+  }
+
+  .past-activities {
+    margin: 0 auto;
+    /* 這將會使容器水平居中 */
+    padding: 0 20px;
+    /* 這將容器內部的內容往內推 */
+    max-width: 1200px;
+  }
+
+  .acImg {
+    width: 184px;
+    height: 92px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    /* 防止圖片在空間不足時縮小 */
+  }
+
+  .activity-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* 平滑過渡效果 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* 初始陰影 */
+    border-radius: 10px;
+    /* 選擇性添加圓角 */
+  }
+
+  .activity-item:hover {
+    transform: scale(1.03);
+    /* 輕微放大 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* 懸停時的陰影 */
+  }
+
+  .no-style-link {
+    color: inherit;
+    /* 繼承顏色 */
+    text-decoration: none;
+    /* 無下劃線 */
+  }
+
+  .no-style-link:hover {
+    color: inherit;
+    /* 保持顏色不變 */
+    text-decoration: none;
+    /* 無下劃線 */
+  }
+
+  .birdtd {
+    display: flex;
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    height: 100%;
+    /* 確保高度足夠展示內容 */
+  }
+
+  .stars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 可以加上這個屬性，如果您想要在垂直方向上也居中 */
+
+  }
+
+  .star {
+    justify-content: center;
+    /* 將子元素靠左對齊 */
+    margin-right: 0px;
+    /* 或者您需要的任何數值 */
+
+
+    position: relative;
+  display: inline-block; /* 或其他適合的顯示類型，以確保星星水平排列 */
+  width:50px; /* 設定為圖片寬度 */
+  height: 50px; /* 設定為圖片高度 */
+
+  }
+
+  /*評分的大小*/
+  .birdimg{
+    position: absolute;
+    top: 0;
+  left: 0;
+
+    max-width: 50px;
+    /* 根據需要調整大小 */
+    max-width: 50px;
+    /* 根據需要調整大小 */
+  }
+
+
+  .star-overlay{
+    position: relative;
+  }
+
+  .MediaListItem-module-dcdf9c25-root {
+    color: #a0a195;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #f9f9f6;
+    z-index: 1;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none !important; /* 取消底線 */
+    border-radius: 20px;
+}
+
+.MediaListItem-module-dcdf9c25-root:hover::after {
+    left: 0;
+    text-decoration: none !important; /* 取消底線 */
+
+}
+.MediaListItem-module-dcdf9c25-root:hover {
+  color: inherit !important; /* 保持原本的文字顏色，不改變 */
+  text-decoration: none !important; /* 移除底線 */
+}
+
+.MediaListItem-module-dcdf9c25-root::after {
+    content: "";
+    background: #f8f8cf;
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    transition: all .8s ease;
+    text-decoration: none !important; /* 取消底線 */
+
+}
+.MediaListItem-module-d1de8818-about-icon-container {
+  display: flex; /* 啟用 flexbox */
+  align-items: center; /* 垂直居中對齊內部項目 */
+  text-decoration: none !important; /* 取消底線 */
+
+}
+
+
+</style>
+
+<body>
+  <div th:replace="~{layout/footer}"></div>
+
+  <div th:replace="~{layout/navbar}"></div>
+  <div class="container" id="app">
+    <div>
+      <img
+        th:src="@{${organizer.get().oPicture}!=null ? ${organizer.get().oPicture} : '/img/orgBanner/orgdefault/testbird.png'}"
+        alt="主辦封面" class="rounded-img fade-and-grow" />
+      <br />
+
+      <div class="cover-div">
+        <div class="headshot-wrapper">
+          <img
+            th:src="@{${organizer.get().oHeadshot}!=null ? ${organizer.get().oHeadshot} : '/img/web/unloginUser.svg'}"
+            alt="主辦頭貼" class="headshot-img" />
+        </div>
+
+        <br />
+        <h2 style="text-align: center" th:text="${organizer.get().oName}"></h2>
+
+        <table class="info-table">
+          <tr>
+            <td><span style="font-weight: bold; font-size: larger">粉絲數</span></td>
+            <td><span style="font-weight: bold; font-size: larger">活動總數</span></td>
+            <td class="birdtd">
+              <div class="stars">
+                <!-- 五隻小鳥評分 -->
+                <div v-for="index in 5" :key="index" class="star">
+                  <!-- 顯示彩色的星星 -->
+                  <img src="../../img/web/colorfulbird.svg" v-if="index <= integerPart" class="birdimg" />
+              
+                  <!-- 顯示部分彩色的星星，只有當有小數部分時 -->
+                  <div v-else-if="index === integerPart + 1 && fractionalPart > 0" class="star-overlay">
+                    <img src="../../img/web/colorfulbird.svg" class="birdimg"
+                         :style="{ 'clip-path': 'inset(0 ' + (100 - fractionalPart * 100) + '% 0 0)' }" />
+                    <img src="../../img/web/unloginUser.svg" class="birdimg"
+                         :style="{ 'clip-path': 'inset(0 0 0 ' + (fractionalPart * 100) + '%)' }" />
+                  </div>
+              
+                  <!-- 當 index 大於 integerPart，或者 index 等於 integerPart + 1 但沒有小數部分時，顯示黑白星星 -->
+                  <img src="../../img/web/unloginUser.svg" v-else class="birdimg" />
+                </div>
+              </div>
+                                                      </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; font-size: larger" id="followedCount">
+              <span>{{followerCount}}</span>
+            </td>
+            <td style="font-weight: bold; font-size: larger" id="activityCount">
+              <span>{{activityCount}}</span>
+            </td>
+            <td style="font-weight: bold; font-size: larger">
+              <span>{{organizerAverageScore}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p sec:authorize="!isAuthenticated()">
+                <!-- 未登入的追蹤按鈕 -->
+                <button class="btn btn-secondary2" @click="showlogin">
+                  追蹤
+                </button>
+              </p>
+              <!-- 追蹤按鈕 -->
+              <button id="followButton" style="display: none" type="button" class="btn btn-secondary2"
+                data-toggle="modal" data-target="#myModal">
+                追蹤
+              </button>
+              <button id="unfollowButton" style="display: none" class="btn btn-light">
+                取消追蹤
+              </button>
+            </td>
+            <td>
+              <button id="toggleButtonTop" class="btn btn-light">關於</button>
+            </td>
+            <td>
+              <!-- 按鈕觸發模態視窗 -->
+              <button type="button" class="btn btn-light" data-toggle="modal" data-target="#formModal">
+                聯繫主辦
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <!--即將舉行活動-->
+        <template v-if="isShowAll">
+          <div class="h-25 w-100">
+            <div class="text-center m-4">
+              <h4><b style="font-size: larger">即將舉行</b></h4>
+              <div v-if="filteredUpcomingActivities.length===0">
+                目前沒有即將舉行的活動<br />沒關係！追蹤主辦就可以收到最新活動上架的消息囉！
+              </div>
+            </div>
+
+            <ul class="cards">
+              <li v-for="ac in filteredUpcomingActivities">
+                <!--one card start-->
+                <a style="width: 330px" :href="`${WEBROOT}/showActivity/activityPage/${ac.acid}`" class="jcard shadow">
+                  <img v-if="ac.acImg" style="height: 250px; padding-bottom: 40px" :src="`${WEBROOT}${ac.acImg}`"
+                    class="jcard__image" alt="" />
+
+                  <div class="jcard__overlay">
+                    <div class="jcard__header">
+                      <svg class="jcard__arc" xmlns="http://www.w3.org/2000/svg">
+                        <path />
+                      </svg>
+                      <div class="jcard__header-text">
+                        <h3 class="jcard__title mb-2">{{ac.acName}}</h3>
+
+                        <span class="jcard__status"></span><span class="jcard__status"><i
+                            class="bi bi-pin-map-fill mr-sm-2"> </i>{{ac.acCity}}</span>
+                      </div>
+
+                      <div class="jcard__thumbnum">
+                        <button style="text-decoration: none" id="likeBtn" class="btn btn-link text-warning"
+                          @click="likeAc(ac.acid)">
+                          <span>
+                            <i class="bi bi-heart mr-sm-2" v-if="!activitiesLiked.includes(ac.acid)"></i>
+                            <i class="bi bi-heart-fill mr-sm-2" v-if="activitiesLiked.includes(ac.acid)"></i>
+                            {{ac.favCount}}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="jcard__description"></p>
+                    <div class="jcard__description_timeinfo">
+                      <span class="jcard__status">日期：{{ac.date}}</span><br />
+                      <span class="jcard__status">時間：{{ac.time}}</span>
+                    </div>
+                    <span v-if="ac.typeNames.length>0"
+                      class="jcard__description_type">#{{ac.typeNames.join("、")}}</span>
+                    <div class="jcard__description_info">
+                      <template v-if="ac.priceLowest<ac.priceHighest && ac.priceLowest>0">
+                        <span class="text-warning">{{ac.priceLowest}} ~ {{ac.priceHighest}} </span><span
+                          class="text-secondary mb-md-2"> 元</span>
+                      </template>
+                      <template v-if="ac.priceLowest==ac.priceHighest && ac.priceLowest>0">
+                        <span class="text-warning">{{ac.priceLowest}}</span><span class="text-secondary mb-md-2">
+                          元</span>
+                      </template>
+                      <template v-if="ac.priceLowest==0">
+                        <span class="text-warning mb-md-2">免費</span>
+                      </template>
+                      <br />
+                      <button style="text-decoration: none" id="signBtn" class="btn btn-link text-secondary"
+                        @click="signAc(ac.acid)">
+                        <span class="text-secondary text-end">
+                          <i class="bi bi-bookmark-check mr-sm-2" v-if="!activitiesSigned.includes(ac.acid)"></i>
+                          <i class="bi bi-bookmark-check-fill mr-sm-2" v-if="activitiesSigned.includes(ac.acid)"></i>
+                          {{ac.signedCount}}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <!--one jcard end-->
+            </ul>
+          </div>
+          <!--熱門活動end-->
+        </template>
+      </div>
+      </br>
+      <!--過往活動-->
+      <div class="past-activities">
+        <h3 v-if="activitiesByYear.length>0">過往活動</h3>
+
+        <div v-for="yearActivities in activitiesByYear" :key="yearActivities.year">
+          <h2>{{ yearActivities.year }} 年</h2>
+          <!-- 顯示年份 -->
+          <!-- 迭代每年的活動 -->
+          <div v-for="activity in yearActivities.activities" :key="activity.acid">
+            <a :href="`/showActivity/activityPage/${activity.acid}`" class="no-style-link">
+              <div class="activity-item">
+                <!-- 顯示月份和日期的圖示 -->
+                <div class="date-icon">
+                  <span class="month">{{ formatMonth(activity.acStartDate) }}</span>
+                  <span class="day">{{ formatDay(activity.acStartDate) }}</span>
+                </div>
+                <!-- 活動資訊，包括圖片、名稱和線上/線下標記 -->
+                <div class="activity-info">
+                  <img :src="activity.acImg" class="acImg" alt="活動圖片" />
+                  <!-- 活動圖片 -->
+                  <div class="activity-details">
+                    <h3>{{ activity.acName }}</h3>
+                    <!-- 活動名稱 -->
+                    <span
+                      v-html="activity.acPlaceStatus === 0 ? '<i class=&quot;bi bi-camera-video&quot;></i> 線上活動' : '<i class=&quot;bi bi-geo-alt&quot;></i> ' + activity.acCity"></span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <!--過往活動結束-->
+      </div>
+
+      <!--簡介和相關連結-->
+      <!--<button id="toggleButton" class="btn btn-warning">關於</button>-->
+      <div id="ajaxContent" style="display: none">
+        <hr />
+        <div>簡介</div>
+        </br>
+        <h4 th:text="${organizer.get().oIntroduction}"></h4>
+        <hr />
+
+        <div
+          th:if="${organizer.get().oLinkA != null or organizer.get().oLinkB != null or organizer.get().oLinkC != null}">
+          <div>相關連結</div>
+          <a th:if="${organizer.get().oLinkA != null}" th:href="@{${organizer.get().oLinkA}}" target="_blank">
+            <img th:src="@{/img/orgBanner/orgdefault/icon_facebook.svg}" alt="fb" />
+          </a>
+          &nbsp
+          <a th:if="${organizer.get().oLinkB != null}" th:href="@{${organizer.get().oLinkB}}" target="_blank">
+            <img th:src="@{/img/orgBanner/orgdefault/icon_instagram.svg}" alt="ig" />
+          </a>
+          &nbsp
+        <!--  <a th:if="${organizer.get().oLinkC != null}" th:href="@{${organizer.get().oLinkC}}" target="_blank">
+            <img th:src="@{/img/orgBanner/orgdefault/icon_youtube.svg}" alt="yt" />
+          </a>-->
+        </br>
+          <div style="border-radius: 20px;">
+            <a th:if="${organizer.get().oLinkC != null}" th:href="@{${organizer.get().oLinkC}}" target="_blank" class="MediaListItem-module-dcdf9c25-root">
+              <div class="MediaListItem-module-ec6e6f9f-about-text-container">
+                <div class="MediaListItem-module-d1de8818-about-icon-container">
+                  <img src="https://static.accupass.com/frontend/image/org/detail/icon_website.svg" class="OrgAbout-module-de8e39b8-about-icon">
+                  &nbsp<span>官方網站
+                  </span>
+  
+                </div>
+              </div>
+              
+              <div class="MediaListItem-module-edd5b0c7-about-arrow">
+                <svg width="8" height="13" viewBox="0 0 8 13">
+                  <path d="M7.3174 5.82571C7.5609 6.06021 7.5609 6.43911 7.3174 6.67431L1.53902 12.2455C1.18755 12.5848 0.6157 12.5848 0.26361 12.2455C-0.08787 11.9062 -0.08787 11.3556 0.26361 11.0163L5.2067 6.24971L0.26361 1.48434C-0.08787 1.14444 -0.08787 0.593767 0.26361 0.254467C0.6157 -0.0848225 1.18755 -0.0848225 1.53902 0.254467L7.3174 5.82571Z">
+                  </path>
+                </svg>
+                </div>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <span id="oid" th:text="${organizer.get().oid}" style="display: none"></span>
+
+      <!-- 模態視窗 -->
+      <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 th:text="'聯絡主辦：'+${organizer.get().oName}" class="modal-title" id="modalLabel"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- 表單 -->
+              <form id="myForm" method="POST">
+                <!-- 姓名欄位 -->
+                <div class="form-group">
+                  <label for="inputName">姓名<span style="color: red">*</span></label>
+                  <input type="text" class="form-control" id="inputName" name="name"
+                    th:value="${session.uf?.uName != null ? session.uf?.uName : ''}" required />
+                </div>
+
+                <!-- 電子郵件欄位 "${session.userinfo.uName}"-->
+                <div class="form-group">
+                  <label for="inputEmail">電子郵件<span style="color: red">*</span></label>
+                  <input type="email" class="form-control" id="inputEmail" name="email"
+                    th:value="${session.uf?.uAccountEmail != null ? session.uf?.uAccountEmail : ''}" required />
+                </div>
+
+                <!-- 電話欄位 -->
+                <div class="form-group">
+                  <label for="inputPhone">電話<span style="color: red">*</span></label>
+                  <input type="tel" class="form-control" id="inputPhone"
+                    th:value="${session.uf?.uTel != null ? session.uf?.uTel : ''}" name="phone" 
+                    required title="請輸入7到20碼的數字" />
+                </div>
+
+                <!-- 問題描述欄位 -->
+                <div class="form-group">
+                  <label for="inputDescription">問題描述<span style="color: red">*</span></label>
+                  <textarea class="form-control" id="inputDescription" name="description" rows="3" required
+                    placeholder="在這裡寫下想聯繫主辦的內容..."></textarea>
+                </div>
+
+                <!-- 提交按鈕 -->
+                <button type="submit" class="btn btn-warning" data-bs-dismiss="modal">送出</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 模態視窗 -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- 模態頭部 -->
+            <div class="modal-header">
+              <h4 class="modal-title">追蹤後要做什麼？</h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+
+            <!-- 模態主體 -->
+            <div class="modal-body">
+              當主辦發布新活動時，你會即時在網站通知列和Email收到通知，好活動不漏接！
+            </div>
+
+            <!-- 模態底部 -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
+                我知道了
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        let organizerId = document.getElementById("oid").innerText; //調用胎歷芙儲存的oid並做js的全域宣告
+        //圖片顯示放大縮小
+        $(window).on("scroll", function () {
+          var scroll = $(window).scrollTop();
+          $(".fade-and-grow").css({
+            opacity: 1 - scroll / 500, // 假設 500px 滾動後完全透明
+            transform: "scale(" + (1 + scroll / 1000) + ")", // 假設滾動 1000px 放大一倍
+          });
+        });
+
+        $(document).ready(function () {
+          //切換顯示簡介
+          $("#toggleButton,#toggleButtonTop").click(function () {
+            $("#ajaxContent").toggle();
+            if ($("#ajaxContent").is(":visible")) {
+              $("html, body").animate(
+                {
+                  scrollTop: $("#ajaxContent").offset().top, // ajaxContent的頂部位置
+                },
+                500
+              ); // 500毫秒內滾動到指定位置
+            }
+          });
+
+          // 檢查是否追蹤的 AJAX 請求
+          $.get(
+            "/api/isFollowing",
+            { organizerId: organizerId },
+            function (isFollowing) {
+              if (isFollowing) {
+                $("#unfollowButton").show();
+              } else {
+                $("#followButton").show();
+              }
+            }
+          );
+
+          $("#followButton").click(function () {
+            $.post(
+              "/api/follow",
+              { organizerId: organizerId },
+              function (data) {
+                $("#followButton").hide();
+                $("#unfollowButton").show();
+                updateFollowedCount(); // 更新追蹤數量
+              }
+            );
+          });
+
+          $("#unfollowButton").click(function () {
+            $.post(
+              "/api/unfollow",
+              { organizerId: organizerId },
+              function (data) {
+                $("#unfollowButton").hide();
+                $("#followButton").show();
+                updateFollowedCount(); // 更新追蹤數量
+              }
+            ).fail(function () {
+              console.log("Error: Request failed");
+            });
+          });
+          function updateFollowedCount() {
+            $.get(
+              "/api/organizerFollowedCount",
+              { oid: organizerId },
+              function (followedCount) {
+                $("#followedCount").text(followedCount);
+              }
+            ).fail(function () {
+              $("#followedCount").text("無法載入");
+            });
+          }
+
+          $.get(
+            "/api/organizerFollowedCount",
+            { oid: organizerId },
+            function (followedCount) {
+              $("#followedCount").text(followedCount);
+            }
+          ).fail(function () {
+            $("#followedCount").text("無法載入");
+          });
+          $.get(
+            "/api/organizerActivitysCount",
+            { oid: organizerId },
+            function (activityCount) {
+              $("#activityCount").text(activityCount);
+            }
+          ).fail(function () {
+            $("#activityCount").text("無法載入");
+          });
+
+          //處理聯繫主辦的表單
+          $("#myForm").submit(function (event) {
+            // 阻止表單的預設提交行為
+            event.preventDefault();
+
+            // 收集表單數據
+            var formData = {
+              name: $("#inputName").val(),
+              email: $("#inputEmail").val(),
+              phone: $("#inputPhone").val(),
+              description: $("#inputDescription").val(),
+              organizerId: organizerId,
+            };
+
+            // 使用 jQuery AJAX 發送數據
+            $.ajax({
+              type: "POST",
+              url: "/api/submitform",
+              contentType: "application/json",
+              data: JSON.stringify(formData),
+              success: function (response) {
+                alert("寄信完成");
+                $("#formModal").modal("hide");
+              },
+              error: function (xhr, status, error) {
+                // 處理錯誤
+                console.error("表單送出失敗: " + error);
+              },
+            });
+          });
+        });
+
+        Vue.createApp({
+          data() {
+            return {
+              activities: [],
+              organizerAverageScore: 0.0,
+              WEBROOT: WebRoot,
+              allAc: [],
+              freeAc: [],
+              soonAc: [],
+              activitiesLiked: [],
+              activitiesSigned: [],
+              userid: "",
+              randomIndexList: [],
+              isShowAll: false,
+
+            };
+          },
+          methods: {
+            hideHint(arrayName) {
+              document.getElementById(arrayName).style.visibility = "hidden";
+            },
+            showHint(arrayName) {
+              document.getElementById(arrayName).style.visibility = "visible";
+            },
+
+            likeAc(acid) {
+              event.preventDefault();
+              //判斷登入
+              if (this.userid != "" && this.userid != null) {
+                let data = {
+                  userid: "",
+                  acid: "",
+                };
+                data.acid = acid;
+                data.userid = this.userid;
+                //判斷目前沒有收藏
+                if (!this.activitiesLiked.includes(acid)) {
+                  axios
+                    .post(`${this.WEBROOT}/like`, data)
+                    .then((response) => { });
+
+                  this.activitiesLiked.push(acid);
+
+                  for (let ac of this.allAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount++;
+                    }
+                  }
+                  for (let ac of this.soonAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount++;
+                    }
+                  }
+                  for (let ac of this.freeAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount++;
+                    }
+                  }
+                } else {
+                  axios
+                    .post(`${this.WEBROOT}/cancelLike`, data)
+                    .then((response) => { });
+                  let index = this.activitiesLiked.indexOf(acid);
+                  this.activitiesLiked.splice(index, 1);
+                  for (let ac of this.allAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount--;
+                    }
+                  }
+                  for (let ac of this.soonAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount--;
+                    }
+                  }
+                  for (let ac of this.freeAc) {
+                    if (ac.acid == acid) {
+                      ac.favCount--;
+                    }
+                  }
+                }
+              } else {
+                alert("請先登入");
+              }
+            },
+
+            signAc(acid) {
+              //點下連結
+              event.preventDefault();
+              window.open(`${this.WEBROOT}/sign/${acid}`);
+            },
+            showlogin() {
+              $("#LoginModal").modal("show");
+            },
+
+            convertAcObject(list) {
+              for (let ac of list) {
+                let acDateTime = new Date(ac.acStartDate);
+                let acDate =
+                  acDateTime.getFullYear() +
+                  "/" +
+                  ("0" + (acDateTime.getMonth() + 1)).slice(-2) +
+                  "/" +
+                  ("0" + acDateTime.getDate()).slice(-2);
+                let acTime =
+                  ("0" + acDateTime.getHours()).slice(-2) +
+                  ":" +
+                  ("0" + acDateTime.getMinutes()).slice(-2);
+                ac.date = acDate;
+                ac.time = acTime;
+                ac.alltypeids = [];
+                ac.typeNames = [];
+
+                for (let type of ac.allTypes) {
+                  ac.alltypeids.push(type.alltypeid);
+                  ac.typeNames.push(type.typeName);
+                }
+              }
+
+              return list;
+            },
+            formatMonth(dateString) {
+              const date = new Date(dateString);
+              return date.toLocaleString("default", { month: "short" });
+            },
+            formatDay(dateString) {
+              const date = new Date(dateString);
+              return date.getDate();
+              //以下是評分小鳥
+            },
+            getStarImage(index) {
+              if (index <= this.integerPart) {
+                return "../../img/web/colorfulbird.svg"; // 彩色星星
+              }
+              return "../../img/web/unloginUser.svg"; // 黑白星星
+            },
+            getStarStyle(index) {
+              let style = {};
+              if (index === this.integerPart + 1 && this.fractionalPart > 0) {
+                // 計算部分彩色星星的比例
+                const coloredPercentage = this.fractionalPart * 100;
+                style = {
+                  position: "relative",
+                  display: "inline-block",
+                  "white-space": "nowrap",
+                };
+                // 部分彩色遮罩的 style
+                this.partialColorStyle = {
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  width: `${coloredPercentage}%`,
+                  overflow: "hidden",
+                  "white-space": "nowrap",
+                };
+                // 部分黑白遮罩的 style
+                this.partialBWStyle = {
+                  display: "inline-block",
+                  width: `calc(${100 - coloredPercentage}% + 1px)`, // 加1px防止出現間隙
+                  overflow: "hidden",
+                  "white-space": "nowrap",
+                };
+              }
+              return style;
+            },
+            getPartialColorStyle() {
+              return this.partialColorStyle;
+            },
+            getPartialBWStyle() {
+              return this.partialBWStyle;
+            },
+
+          },
+
+          created() {
+            axios
+              .get("/api/organizers/" + organizerId + "/activities")
+              .then((response) => {
+                let activitys = response.data;
+                console.log(activitys);
+                this.convertAcObject(activitys);
+                this.allAc = activitys;
+                let randomSet = Array.from({ length: 10 }, () =>
+                  Math.floor(Math.random() * activitys.length)
+                );
+                this.randomIndexList = randomSet;
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+
+            axios
+              .get("/api/organizers/" + organizerId + "/ocomments")
+              .then((response) => {
+                this.organizerAverageScore = response.data;
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+
+            /* --------------------------------------------*/
+
+            axios
+              .get(`${WebRoot}/api/session/getUserinfo`)
+              .then((response) => {
+                if (response.data != "") {
+                  this.userid = response.data.userid;
+
+                  axios
+                    .get(`${WebRoot}/userlike/${response.data.userid}`)
+                    .then((response) => {
+                      this.activitiesLiked = response.data.acids;
+                      this.activitiesSigned = response.data.asfids;
+                    });
+                }
+              }),
+              //soon Activities
+              axios.get(`${WebRoot}/endSoon`).then((response) => {
+                let activitys = response.data;
+                this.convertAcObject(activitys);
+                this.soonAc = activitys;
+                //console.log(this.soonAc);
+              }),
+              //free Activities
+              axios.get(`${WebRoot}/free`).then((response) => {
+                let activitys = response.data;
+                this.convertAcObject(activitys);
+                this.freeAc = activitys;
+              });
+            //all Activities
+
+          },
+
+          mounted() {
+            this.isShowAll = true;
+          },
+
+          computed: {
+            pastActivities() {
+              const now = new Date();
+              return this.allAc.filter(
+                (activity) => new Date(activity.acStartDate) < now
+              );
+            },
+            upcomingActivities() {
+              const now = new Date();
+              return this.allAc.filter((activity) => {
+                console.log(activity); // 在此處添加，以輸出當前正在處理的 activity 物件
+                return new Date(activity.acStartDate) >= now;
+              });
+            },
+            filteredPastActivities() {
+              return this.pastActivities.filter(
+                (activity) =>
+                  activity.acCheckStatus == 2 && activity.acPublicStatus == 1
+              );
+            },
+            filteredUpcomingActivities() {
+              return this.upcomingActivities.filter(
+                (activity) =>
+                  activity.acCheckStatus == 2 && activity.acPublicStatus == 1
+              );
+            },
+            activitiesByYear() {
+              // 首先按年份分組
+              const groupedActivities = this.filteredPastActivities.reduce(
+                (acc, activity) => {
+                  const year = new Date(activity.acStartDate).getFullYear();
+                  if (!acc[year]) {
+                    acc[year] = [];
+                  }
+                  acc[year].push(activity);
+                  return acc;
+                },
+                {}
+              );
+
+              // 對每個年份內的活動進行排序
+              Object.keys(groupedActivities).forEach((year) => {
+                groupedActivities[year].sort(
+                  (a, b) => new Date(b.acStartDate) - new Date(a.acStartDate)
+                );
+              });
+
+              // 轉換成 { year, activities } 的形式
+              const activitiesArray = Object.keys(groupedActivities)
+                .sort((a, b) => b - a) // 降序排序年份
+                .map((year) => ({
+                  year,
+                  activities: groupedActivities[year],
+                }));
+
+              return activitiesArray; // 返回已排序的數組
+            },
+            //評分整數和小數
+            integerPart() {
+              return Math.floor(this.organizerAverageScore);
+            },
+            fractionalPart() {
+              return this.organizerAverageScore % 1; // 取小數部分
+            },
+
+
+          },
+        }).mount("#app");
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
